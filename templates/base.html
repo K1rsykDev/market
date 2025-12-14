@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or 'Marketplace' }}</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-+r+f+5lZAmzdr9VNMBD5r2xhsOz0rW6x6tEN84ImU8vzU6RyX2h1aw1nUVQ3CNpI3Y8N+zbyQQ7WqFE4hwyC0w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+<header class="topbar">
+    <div class="logo">GameHub Marketplace</div>
+    <nav>
+        <a href="{{ url_for('index') }}">Головна</a>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">Профіль</a>
+            <a href="{{ url_for('create_listing') }}" class="btn">Нове оголошення</a>
+            {% if current_role and (current_role.can_manage_roles or current_role.can_manage_users) %}
+                <a href="{{ url_for('admin_dashboard') }}">Адмін-панель</a>
+            {% endif %}
+            <a href="{{ url_for('logout') }}">Вийти</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Увійти</a>
+            <a href="{{ url_for('register') }}" class="btn">Реєстрація</a>
+        {% endif %}
+    </nav>
+</header>
+
+<main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+<footer class="footer">Розроблено для спільноти гравців • Dark theme marketplace</footer>
+</body>
+</html>

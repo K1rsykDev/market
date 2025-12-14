@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Ролі</h2>
+<div class="form-card">
+    <h3>Створити нову роль</h3>
+    <form method="post">
+        <label>Назва ролі <input type="text" name="name" required></label>
+        <label><input type="checkbox" name="can_delete_any_listing"> Може видаляти будь-які оголошення</label>
+        <label><input type="checkbox" name="can_manage_roles"> Може керувати ролями</label>
+        <label><input type="checkbox" name="can_manage_users"> Може призначати ролі користувачам</label>
+        <button class="btn" type="submit">Зберегти</button>
+    </form>
+</div>
+
+<h3>Список ролей</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Назва</th>
+            <th>Видаляти оголошення</th>
+            <th>Керувати ролями</th>
+            <th>Керувати користувачами</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for role in roles %}
+            <tr>
+                <td>{{ role.name }}</td>
+                <td>{{ 'Так' if role.can_delete_any_listing else 'Ні' }}</td>
+                <td>{{ 'Так' if role.can_manage_roles else 'Ні' }}</td>
+                <td>{{ 'Так' if role.can_manage_users else 'Ні' }}</td>
+                <td><a class="btn ghost" href="{{ url_for('edit_role', role_id=role.id) }}">Редагувати</a></td>
+            </tr>
+        {% else %}
+            <tr><td colspan="5">Ролей ще немає</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

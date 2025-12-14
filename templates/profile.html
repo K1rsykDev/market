@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="profile">
+    <div class="profile-card">
+        <h2>Профіль</h2>
+        <div class="tabs">
+            <div class="tab active">Загальна інформація</div>
+            <div class="tab">Ваші оголошення</div>
+        </div>
+        <div class="profile-info">
+            <p><strong>NickName:</strong> {{ user.username }}</p>
+            <p><strong>Discord:</strong> {{ user.discord }}</p>
+            <p><strong>Роль:</strong> {{ user.role.name }}</p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h3>Ваші оголошення</h3>
+    <div class="grid">
+        {% for listing in listings %}
+            <article class="card">
+                <div class="card-image">
+                    {% if listing.image_url %}
+                        <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                    {% else %}
+                        <span class="placeholder">Фото не додано</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="meta">
+                        <span class="pill">{{ listing.category }}</span>
+                        <span class="pill muted">{{ listing.created_at.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    <h3>{{ listing.title }}</h3>
+                    <p class="price">{{ listing.price or 'договірна' }}</p>
+                    <p class="desc">{{ listing.description }}</p>
+                    <div class="contact">Discord: {{ listing.contact_discord }}</div>
+                    <div class="actions">
+                        <a class="btn ghost" href="{{ url_for('edit_listing', listing_id=listing.id) }}">Редагувати</a>
+                        <form method="post" action="{{ url_for('delete_listing', listing_id=listing.id) }}" onsubmit="return confirm('Видалити оголошення?')">
+                            <button class="btn danger" type="submit">Видалити</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        {% else %}
+            <p class="empty">У вас ще немає оголошень.</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
