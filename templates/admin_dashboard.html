@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Адмін-панель</h2>
+<div class="admin-grid">
+    <section>
+        <h3>Оголошення</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Назва</th>
+                    <th>Автор</th>
+                    <th>Категорія</th>
+                    <th>Ціна</th>
+                    <th>Дата</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for listing in listings %}
+                    <tr>
+                        <td>{{ listing.title }}</td>
+                        <td>{{ listing.owner.username }}</td>
+                        <td>{{ listing.category }}</td>
+                        <td>{{ listing.price or 'договірна' }}</td>
+                        <td>{{ listing.created_at.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('admin_delete_listing', listing_id=listing.id) }}" onsubmit="return confirm('Видалити оголошення?')">
+                                <button class="btn danger" type="submit">Видалити</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6">Немає оголошень</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+
+    <section>
+        <h3>Користувачі</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Логін</th>
+                    <th>Discord</th>
+                    <th>Роль</th>
+                    <th>Призначити роль</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.discord }}</td>
+                        <td>{{ user.role.name }}</td>
+                        <td>
+                            <form method="post" action="{{ url_for('update_user_role', user_id=user.id) }}">
+                                <select name="role_id">
+                                    {% for role in roles %}
+                                        <option value="{{ role.id }}" {% if user.role_id == role.id %}selected{% endif %}>{{ role.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <button class="btn ghost" type="submit">Оновити</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4">Немає користувачів</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </section>
+</div>
+
+{% if current_role and current_role.can_manage_roles %}
+<div class="toolbar">
+    <a class="btn" href="{{ url_for('manage_roles') }}">Управління ролями</a>
+</div>
+{% endif %}
+{% endblock %}

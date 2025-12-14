@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero">
+    <div>
+        <h1>Marketplace спільноти</h1>
+        <p>Знайдіть або продайте свій ігровий транспорт, нерухомість, одяг чи аксесуари.</p>
+        {% if current_user.is_authenticated %}
+            <a href="{{ url_for('create_listing') }}" class="btn">Створити оголошення</a>
+        {% else %}
+            <a href="{{ url_for('register') }}" class="btn">Приєднатися</a>
+        {% endif %}
+    </div>
+</section>
+
+<section class="filters">
+    <form method="get" class="filter-form">
+        <label>
+            Категорія:
+            <select name="category">
+                <option value="all" {% if request.args.get('category') == 'all' or not request.args.get('category') %}selected{% endif %}>Усі</option>
+                {% for option in categories %}
+                    <option value="{{ option }}" {% if request.args.get('category') == option %}selected{% endif %}>{{ option }}</option>
+                {% endfor %}
+            </select>
+        </label>
+        <label>
+            Сортування:
+            <select name="sort">
+                <option value="date_desc" {% if request.args.get('sort') == 'date_desc' %}selected{% endif %}>За датою (нові)</option>
+                <option value="price_asc" {% if request.args.get('sort') == 'price_asc' %}selected{% endif %}>Ціна ↑</option>
+                <option value="price_desc" {% if request.args.get('sort') == 'price_desc' %}selected{% endif %}>Ціна ↓</option>
+            </select>
+        </label>
+        <button type="submit" class="btn">Застосувати</button>
+    </form>
+</section>
+
+<section class="grid">
+    {% for listing in listings %}
+        <article class="card">
+            <div class="card-image">
+                {% if listing.image_url %}
+                    <img src="{{ listing.image_url }}" alt="{{ listing.title }}">
+                {% else %}
+                    <span class="placeholder">Фото не додано</span>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                <div class="meta">
+                    <span class="pill">{{ listing.category }}</span>
+                    <span class="pill muted">{{ listing.created_at.strftime('%Y-%m-%d') }}</span>
+                </div>
+                <h3>{{ listing.title }}</h3>
+                <p class="price">{{ listing.price or 'договірна' }}</p>
+                <p class="desc">{{ listing.description }}</p>
+                <div class="contact">Discord: {{ listing.contact_discord }}</div>
+                <div class="author">Автор: {{ listing.owner.username }}</div>
+            </div>
+        </article>
+    {% else %}
+        <p class="empty">Оголошень поки немає.</p>
+    {% endfor %}
+</section>
+{% endblock %}

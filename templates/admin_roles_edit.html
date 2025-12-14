@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h2>Редагування ролі</h2>
+<div class="form-card">
+    <form method="post">
+        <label>Назва ролі <input type="text" name="name" value="{{ role.name }}" required></label>
+        <label><input type="checkbox" name="can_delete_any_listing" {% if role.can_delete_any_listing %}checked{% endif %}> Може видаляти будь-які оголошення</label>
+        <label><input type="checkbox" name="can_manage_roles" {% if role.can_manage_roles %}checked{% endif %}> Може керувати ролями</label>
+        <label><input type="checkbox" name="can_manage_users" {% if role.can_manage_users %}checked{% endif %}> Може призначати ролі користувачам</label>
+        <button class="btn" type="submit">Оновити</button>
+        <a class="btn ghost" href="{{ url_for('manage_roles') }}">Назад</a>
+    </form>
+</div>
+{% endblock %}
